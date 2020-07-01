@@ -1,0 +1,9 @@
+Makefile
+*.ko
+*.o
+*.dwo
+*.cmd
+*.order
+*.symvers
+.tmp_versions/
+*.mod.c
