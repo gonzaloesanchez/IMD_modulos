@@ -7,3 +7,5 @@ Makefile
 *.symvers
 .tmp_versions/
 *.mod.c
+.cproject
+.project
