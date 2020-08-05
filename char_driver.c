@@ -3,6 +3,7 @@
 #include <linux/fs.h>
 #include <linux/miscdevice.h>
 #include <linux/i2c.h>
+#include <linux/types.h>
 
 /* Strings definiendo el nombre del dispositivo */
 #define DEVICE_NAME 		"EK_IMD"
@@ -99,12 +100,11 @@ static int ekIMD_probe(struct i2c_client *connected_slave, const struct i2c_devi
 
 	pr_info("Ejecutando funcion probe()\n");
 	pr_info("Informacion de dispositivo conectado (struct i2c_client):\n");
-	pr_info("\tDireccion: %X\n",connected_slave->addr);
-	pr_info("\tNombre: %s\n",connected_slave->name);
-	pr_info("\tDriver: %s\n",connected_slave->dev->driver->name);
 
-	pr_info("\n\nInformacion desde ID (struct i2c_device_id):\n");
-	pr_info("\tNombre: %s",id->name);
+	pr_info("\tDireccion: %#x\n",connected_slave->addr);
+	pr_info("\tNombre: %s\n",connected_slave->name);
+
+	pr_info("\tDriver: %s\n",(connected_slave->dev).driver->name);
 
 
 
@@ -114,11 +114,7 @@ static int ekIMD_probe(struct i2c_client *connected_slave, const struct i2c_devi
 		pr_err("No se pudo registrar el dispositivo %s\n", DEVICE_NAME);
 		return ret_val;
 	}
-	pr_info("%s: minor asignado: %i\n", DEVICE_NAME, ekIMD_miscdevice.minor);
-
-	pr_info("Informacion de dispositivo conectado luego de registrar:\n");
-	pr_info("\tClase: %s\n",connected_slave->dev->class->name);
-	pr_info("\tMajor number: %d\n",MAJOR(connected_slave->dev->devt));
+	pr_info("Dispositivo %s: minor asignado: %i\n", DEVICE_NAME, ekIMD_miscdevice.minor);
 
 	/*
 	 * Una vez que tenemos numeros Major y Minor, exponemos al modulo completo
@@ -139,6 +135,8 @@ static int ekIMD_remove(struct i2c_client *client)  {
 
 	pr_info("Modulo descargado, anulado el registro");
 
+	return 0;
+
 }
 
 
@@ -148,7 +146,7 @@ static struct i2c_driver ekIMD_driver = {
 	.probe= ekIMD_probe,
 	.remove= ekIMD_remove,
 	.driver = {
-		.name = "EK_IMD",
+		.name = "EK_IMD_driver",
 		.owner = THIS_MODULE,
 		.of_match_table = of_match_ptr(ekIMD_dt_ids),
 	},
